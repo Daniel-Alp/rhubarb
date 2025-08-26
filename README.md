@@ -1,4 +1,4 @@
-# DAlpBlue
+# Rhubarb
 Engine that supports the Universal Chess Interface. I've tried to order features for each category chronologically.
 
 # Features
