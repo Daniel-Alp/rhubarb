@@ -76,6 +76,7 @@ void best_move(Position& pos, SearchData& search_data) {
 				break;
 			}
 		}
+		std::cout << "info score " << score << std::endl; 
 	}
 	search_data.searching = false;
 	std::cout << "bestmove " << best_move_root_prev.to_str() << std::endl;

@@ -2,6 +2,7 @@
 #include "move.h"
 #include "makemove.h"
 #include "movegen.h"
+#include "perft.h"
 #include "parser.h"
 #include "search.h"
 #include "timemanagement.h"
@@ -14,8 +15,6 @@
 #include <thread>
 #include <vector>
 
-
-//The UCI is "blind" and does not validate commands. That is the responsibility of the GUI.
 void uci_loop() {
 	Position pos{};
 	SearchData search_data{};
@@ -37,7 +36,7 @@ void uci_loop() {
 			break;
 		}
 		else if (cmd_type == "uci") {
-			std::cout << "id name DAlpBlue" << std::endl;
+			std::cout << "id name rhubarb" << std::endl;
 			std::cout << "id author Daniel Alp" << std::endl;
 			std::cout << "uciok" << std::endl;
 		}
@@ -51,6 +50,9 @@ void uci_loop() {
 		}
 		else if (cmd_type == "position") {
 			uci_position_command(cmd_sections, pos);
+		} 
+		else if (cmd_type == "perft") {
+			uci_perft_command(cmd_sections, pos);
 		}
 		else if (cmd_type == "go") {
 			if (search_thread.joinable()) {
@@ -120,6 +122,12 @@ void uci_go_command(const std::vector<std::string>& cmd_sections, std::thread& s
 	search_data.max_depth = 255;
 
 	search_thread = std::thread(best_move, std::ref(pos), std::ref(search_data));
+}
+
+void uci_perft_command(const std::vector<std::string>& cmd_sections, Position& pos) {
+	int32_t depth = std::stoi(cmd_sections[1]);
+	int32_t ply = 0;
+	std::cout << perft(pos, depth, ply) << std::endl;
 }
 
 void uci_position_command(const std::vector<std::string>& cmd_sections, Position& pos) {

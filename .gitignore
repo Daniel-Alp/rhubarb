@@ -1,1 +1,3 @@
 build/
+config.json #ignore fastchess config
+.vscode/
