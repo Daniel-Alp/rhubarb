@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-bool make_move(Position& pos, const Move& move) {
+bool make_move(Position &pos, const Move &move) {
 	pos.undo_stack[pos.ply].en_passant_sq	= pos.en_passant_sq;
 	pos.undo_stack[pos.ply].castling_rights = pos.castling_rights;
 	pos.undo_stack[pos.ply].fifty_move_rule = pos.fifty_move_rule;
@@ -46,15 +46,13 @@ bool make_move(Position& pos, const Move& move) {
 			move_pce(pos, Square::A8, Square::D8);
 			break;
 		}
-	}
-	else {
+	} else {
 		const Piece cap_pce = move.get_cap_pce();
 		if (cap_pce != Piece::NONE) {
 			pos.fifty_move_rule = 0;
 			if (move.is_en_passant()) {
 				clear_pce(pos, to_sq ^ 8);
-			}
-			else {
+			} else {
 				clear_pce(pos, to_sq);
 			}
 		}
@@ -66,8 +64,7 @@ bool make_move(Position& pos, const Move& move) {
 			if (promo_pce != Piece::NONE) {
 				clear_pce(pos, to_sq);
 				add_pce(pos, promo_pce, to_sq);
-			}
-			else if (move.is_pawn_start()) {
+			} else if (move.is_pawn_start()) {
 				pos.en_passant_sq = static_cast<Square>(to_sq ^ 8);
 				pos.zobrist_key = hash_en_passant_sq(pos.zobrist_key, pos.en_passant_sq);
 			}
@@ -89,7 +86,7 @@ bool make_move(Position& pos, const Move& move) {
 	return true;
 }
 
-void undo_move(Position& pos, const Move& move) {
+void undo_move(Position &pos, const Move &move) {
 	pos.history_ply--;
 	pos.ply--;
 	pos.side_to_move = flip_col(pos.side_to_move);
@@ -113,8 +110,7 @@ void undo_move(Position& pos, const Move& move) {
 			move_pce(pos, Square::D8, Square::A8);
 			break;
 		}
-	}
-	else {
+	} else {
 		const Piece promo_pce = move.get_promo_pce();
 		if (promo_pce != Piece::NONE) {
 			clear_pce(pos, to_sq);
@@ -128,8 +124,7 @@ void undo_move(Position& pos, const Move& move) {
 		if (cap_pce != Piece::NONE) {
 			if (move.is_en_passant()) {
 				add_pce(pos, cap_pce, to_sq ^ 8);
-			}
-			else {
+			} else {
 				add_pce(pos, cap_pce, to_sq);
 			}
 		}

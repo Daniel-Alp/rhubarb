@@ -6,7 +6,7 @@
 #include "types.h"
 #include <array>
 
-MoveList gen_pseudo_moves(const Position& pos, const bool exclude_quiet) {
+MoveList gen_pseudo_moves(const Position &pos, const bool exclude_quiet) {
 	MoveList move_list;
 
 	const Piece knight = build_pce(PieceType::KNIGHT, pos.side_to_move);
@@ -19,8 +19,7 @@ MoveList gen_pseudo_moves(const Position& pos, const bool exclude_quiet) {
 
 	if (exclude_quiet) {
 		targets = pos.all_bitboard;
-	}
-	else {
+	} else {
 		gen_castling_moves(pos, move_list);
 	}
 
@@ -34,7 +33,7 @@ MoveList gen_pseudo_moves(const Position& pos, const bool exclude_quiet) {
 	return move_list;
 };
 
-void serialize_moves(const Position& pos, MoveList& move_list, const u64 targets, u64 attacks, const i32 from_sq) {
+void serialize_moves(const Position &pos, MoveList &move_list, const u64 targets, u64 attacks, const i32 from_sq) {
 	attacks &= ~pos.col_bitboards[pos.side_to_move];
 	attacks &= targets;
 	while (attacks != 0) {
@@ -44,7 +43,7 @@ void serialize_moves(const Position& pos, MoveList& move_list, const u64 targets
 	}
 }
 
-void serialize_pawn_promo(const Position& pos, MoveList& move_list, u64 to_sqs, const i32 dir) {
+void serialize_pawn_promo(const Position &pos, MoveList &move_list, u64 to_sqs, const i32 dir) {
 	while (to_sqs != 0) {
 		const i32 to_sq = get_lsb(to_sqs);
 		const i32 from_sq = to_sq - dir;
@@ -57,7 +56,7 @@ void serialize_pawn_promo(const Position& pos, MoveList& move_list, u64 to_sqs, 
 	}
 }
 
-void serialize_pawn_non_promo(const Position& pos, MoveList& move_list, u64 to_sqs, const i32 dir, const MoveFlag flag) {
+void serialize_pawn_non_promo(const Position &pos, MoveList &move_list, u64 to_sqs, const i32 dir, const MoveFlag flag) {
 	while (to_sqs != 0) {
 		const i32 to_sq = get_lsb(to_sqs);
 		move_list.push_back(Move(to_sq - dir, to_sq, pos.pces[to_sq], Piece::NONE, flag));
@@ -65,7 +64,7 @@ void serialize_pawn_non_promo(const Position& pos, MoveList& move_list, u64 to_s
 	}
 }
 
-void gen_pawn_moves(const Position& pos, MoveList& move_list, const u64 targets, const Color col) {
+void gen_pawn_moves(const Position &pos, MoveList &move_list, const u64 targets, const Color col) {
 	const u64 empty = ~pos.all_bitboard;
 	if (col == Color::WHITE) {
 		const u64 pawns = pos.pce_bitboards[Piece::WHITE_PAWN];
@@ -94,8 +93,7 @@ void gen_pawn_moves(const Position& pos, MoveList& move_list, const u64 targets,
 				capture_en_passant = clear_lsb(capture_en_passant);
 			}
 		}
-	}
-	else {
+	} else {
 		const u64 pawns = pos.pce_bitboards[Piece::BLACK_PAWN];
 		const u64 enemy = pos.col_bitboards[Color::WHITE];
 
@@ -125,13 +123,13 @@ void gen_pawn_moves(const Position& pos, MoveList& move_list, const u64 targets,
 	}
 }
 
-void gen_king_moves(const Position& pos, MoveList& move_list, const u64 targets, u64 king) {
+void gen_king_moves(const Position &pos, MoveList &move_list, const u64 targets, u64 king) {
 	const i32 from_sq = get_lsb(king);
 	const u64 attacks = king_attacks[from_sq];
 	serialize_moves(pos, move_list, targets, attacks, from_sq);
 }
 
-void gen_knight_moves(const Position& pos, MoveList& move_list, const u64 targets, u64 knights) {
+void gen_knight_moves(const Position &pos, MoveList &move_list, const u64 targets, u64 knights) {
 	while (knights != 0) {
 		const i32 from_sq = get_lsb(knights);
 		const u64 attacks = knight_attacks[from_sq];
@@ -140,7 +138,7 @@ void gen_knight_moves(const Position& pos, MoveList& move_list, const u64 target
 	}
 }
 
-void gen_bishop_moves(const Position& pos, MoveList& move_list, const u64 targets, u64 bishops) {
+void gen_bishop_moves(const Position &pos, MoveList &move_list, const u64 targets, u64 bishops) {
 	while (bishops != 0) {
 		const i32 from_sq = get_lsb(bishops);
 		const u64 attacks = gen_bishop_attacks(from_sq, pos.all_bitboard);
@@ -149,7 +147,7 @@ void gen_bishop_moves(const Position& pos, MoveList& move_list, const u64 target
 	}
 };
 
-void gen_rook_moves(const Position& pos, MoveList& move_list, const u64 targets, u64 rooks) {
+void gen_rook_moves(const Position &pos, MoveList &move_list, const u64 targets, u64 rooks) {
 	while (rooks != 0) {
 		const i32 from_sq = get_lsb(rooks);
 		const u64 attacks = gen_rook_attacks(from_sq, pos.all_bitboard);
@@ -158,7 +156,7 @@ void gen_rook_moves(const Position& pos, MoveList& move_list, const u64 targets,
 	}
 };
 
-void gen_queen_moves(const Position& pos, MoveList& move_list, const u64 targets, u64 queens) {
+void gen_queen_moves(const Position &pos, MoveList &move_list, const u64 targets, u64 queens) {
 	while (queens != 0) {
 		const i32 from_sq = get_lsb(queens);
 		const u64 attacks = gen_rook_attacks(from_sq, pos.all_bitboard) ^ gen_bishop_attacks(from_sq, pos.all_bitboard);
@@ -167,7 +165,7 @@ void gen_queen_moves(const Position& pos, MoveList& move_list, const u64 targets
 	}
 };
 
-void gen_castling_moves(const Position& pos, MoveList& move_list) {
+void gen_castling_moves(const Position &pos, MoveList &move_list) {
 	if (pos.side_to_move == Color::WHITE) {
 		if (sq_attacked(pos, Square::E1, Color::BLACK)) {
 			return;
@@ -182,8 +180,7 @@ void gen_castling_moves(const Position& pos, MoveList& move_list) {
 			!sq_attacked(pos, Square::D1, Color::BLACK)) {
 			move_list.push_back(Move(Square::E1, Square::C1, Piece::NONE, Piece::NONE, MoveFlag::CASTLE));
 		}
-	}
-	else {
+	} else {
 		if (sq_attacked(pos, Square::E8, Color::WHITE)) {
 			return;
 		}

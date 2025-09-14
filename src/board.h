@@ -51,18 +51,23 @@ struct Position {
 };
 
 Position load_from_fen(const std::string &fen);
+
 inline i32 get_rank(const i32 sq) {
 	return sq >> 3;
 }
+
 inline i32 get_file(const i32 sq) {
 	return sq & 7;
 }
+
 inline i32 get_sq(const i32 rank, const i32 file) {
 	return (rank << 3) + file;
 }
+
 inline i32 mirror_sq(const i32 sq) {
 	return sq ^ 56;
 }
+
 inline Color flip_col(const Color col) {
 	return static_cast<Color>(col ^ 1);
 }

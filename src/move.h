@@ -25,11 +25,11 @@ public:
 		val = (from_sq | (to_sq << 6) | (capture_pce << 12) | (promo_pce << 16) | flag);
 	}
 
-	inline bool operator == (const Move& move) const {
+	inline bool operator == (const Move &move) const {
 		return val == move.val;
 	}
 
-	inline bool operator != (const Move& move) const {
+	inline bool operator != (const Move &move) const {
 		return val != move.val;
 	}
 

@@ -1,12 +1,5 @@
-#include "common.h"
-#include "attacks.h"
-#include "board.h"
-#include "constants.h"
-#include "evaluation.h"
-#include "makemove.h"
-#include "move.h"
-#include "movegen.h"
 #include "search.h"
+#include "makemove.h"
 #include <algorithm>
 #include <iostream>
 
@@ -14,7 +7,7 @@ std::array<std::array<i64, 64>, 15> history_table;
 std::array<std::array<Move, 2>, 257> killer_table;
 std::array<std::array<i32, 218>, 256> reduction_table;
 
-void best_move(Position& pos, SearchData& search_data) {
+void best_move(Position &pos, SearchData &search_data) {
 	div_two_history_table();
 	clear_killer_table();
 	search_data.nodes = 0;
@@ -38,8 +31,7 @@ void best_move(Position& pos, SearchData& search_data) {
 			if (!search_data.searching) {
 				break;
 			}
-		}
-		else {
+		} else {
 			i32 delta = 30;
 			i32 alpha = std::max(score_prev - delta, -mate_score);
 			i32 beta = std::min(score_prev + delta, mate_score);
@@ -56,14 +48,12 @@ void best_move(Position& pos, SearchData& search_data) {
 					if (alpha < -800) {
 						alpha = -mate_score;
 					}
-				}
-				else if (score >= beta) {
+				} else if (score >= beta) {
 					beta = std::min(beta + delta, mate_score);
 					if (beta > 800) {
 						beta = mate_score;
 					}
-				}
-				else {
+				} else {
 					break;
 				}
 
@@ -83,7 +73,7 @@ void best_move(Position& pos, SearchData& search_data) {
 }
 
 
-i32 negamax(Position& pos, SearchData& search_data, i32 alpha, i32 beta, i32 depth, i32 ply, bool allow_null) {
+i32 negamax(Position &pos, SearchData &search_data, i32 alpha, i32 beta, i32 depth, i32 ply, bool allow_null) {
 	if (time_up(search_data)) {
 		search_data.searching = false;
 		return 0;
@@ -185,8 +175,7 @@ i32 negamax(Position& pos, SearchData& search_data, i32 alpha, i32 beta, i32 dep
 				}
 
 				score = -negamax(pos, search_data, -alpha - 1, -alpha, depth - 1 - reduction, ply + 1, true);
-			}
-			else {
+			} else {
 				score = alpha + 1;
 			}
 
@@ -196,8 +185,7 @@ i32 negamax(Position& pos, SearchData& search_data, i32 alpha, i32 beta, i32 dep
 					score = -negamax(pos, search_data, -beta, -alpha, depth - 1, ply + 1, true);
 				}
 			}
-		}
-		else {
+		} else {
 			score = -negamax(pos, search_data, -beta, -alpha, depth - 1, ply + 1, true);
 		}
 
@@ -246,8 +234,7 @@ i32 negamax(Position& pos, SearchData& search_data, i32 alpha, i32 beta, i32 dep
 	if (num_legal_moves == 0) {
 		if (in_check) {
 			return -mate_score + ply;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}
@@ -257,11 +244,9 @@ i32 negamax(Position& pos, SearchData& search_data, i32 alpha, i32 beta, i32 dep
 	HashFlag hash_flag;
 	if (best_score >= beta) {
 		hash_flag = HashFlag::BETA;
-	}
-	else if (best_score > orig_alpha) {
+	} else if (best_score > orig_alpha) {
 		hash_flag = HashFlag::EXACT;
-	}
-	else {
+	} else {
 		hash_flag = HashFlag::ALPHA;
 	}
 	hash_table.record(pos.zobrist_key, depth, recorded_score, hash_flag, best_move);
@@ -269,7 +254,7 @@ i32 negamax(Position& pos, SearchData& search_data, i32 alpha, i32 beta, i32 dep
 	return best_score;
 }
 
-i32 quiescence(Position& pos, SearchData& search_data, i32 alpha, i32 beta) {
+i32 quiescence(Position &pos, SearchData &search_data, i32 alpha, i32 beta) {
 	if (time_up(search_data)) {
 		search_data.searching = false;
 		return 0;

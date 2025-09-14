@@ -33,45 +33,37 @@ void uci_loop() {
 				search_thread.join();
 			}
 			break;
-		}
-		else if (cmd_type == "uci") {
+		} else if (cmd_type == "uci") {
 			std::cout << "id name rhubarb" << std::endl;
 			std::cout << "id author Daniel Alp" << std::endl;
 			std::cout << "uciok" << std::endl;
-		}
-		else if (cmd_type == "isready") {
+		} else if (cmd_type == "isready") {
 			std::cout << "readyok" << std::endl;
-		}
-		else if (cmd_type == "ucinewgame") {
+		} else if (cmd_type == "ucinewgame") {
 			pos = load_from_fen(start_fen);
 			hash_table.clear();
 			clear_history_table();
-		}
-		else if (cmd_type == "position") {
+		} else if (cmd_type == "position") {
 			uci_position_command(cmd_sections, pos);
-		} 
-		else if (cmd_type == "perft") {
+		} else if (cmd_type == "perft") {
 			uci_perft_command(cmd_sections, pos);
-		}
-		else if (cmd_type == "go") {
+		} else if (cmd_type == "go") {
 			if (search_thread.joinable()) {
 				search_thread.join();
 			}
 			uci_go_command(cmd_sections, search_thread, search_data, pos);
-		}
-		else if (cmd_type == "stop") {
+		} else if (cmd_type == "stop") {
 			search_data.searching = false;
 			if (search_thread.joinable()) {
 				search_thread.join();
 			}
-		}
-		else {
+		} else {
 			std::cout << "Unknown command: " << cmd << std::endl;
 		}
 	}
 }
 
-void uci_go_command(const std::vector<std::string>& cmd_sections, std::thread& search_thread, SearchData& search_data, Position& pos) {
+void uci_go_command(const std::vector<std::string> &cmd_sections, std::thread &search_thread, SearchData &search_data, Position &pos) {
 	i32 wtime = 0;
 	i32 btime = 0;
 	i32 winc = 0;
@@ -84,17 +76,13 @@ void uci_go_command(const std::vector<std::string>& cmd_sections, std::thread& s
 		token_type = cmd_sections[token];
 		if (token_type == "wtime") {
 			wtime = std::stoi(cmd_sections[token + 1]);
-		}
-		else if (token_type == "btime") {
+		} else if (token_type == "btime") {
 			btime = std::stoi(cmd_sections[token + 1]);
-		}
-		else if (token_type == "winc") {
+		} else if (token_type == "winc") {
 			winc = std::stoi(cmd_sections[token + 1]);
-		}
-		else if (token_type == "binc") {
+		} else if (token_type == "binc") {
 			binc = std::stoi(cmd_sections[token + 1]);
-		}
-		else if (token_type == "movestogo") {
+		} else if (token_type == "movestogo") {
 			moves_to_go = std::stoi(cmd_sections[token + 1]);
 		}
 	}
@@ -109,8 +97,7 @@ void uci_go_command(const std::vector<std::string>& cmd_sections, std::thread& s
 		opp_time = btime;
 		player_inc = winc;
 		opp_inc = binc;
-	}
-	else {
+	} else {
 		player_time = btime;
 		opp_time = wtime;
 		player_inc = binc;
@@ -123,20 +110,19 @@ void uci_go_command(const std::vector<std::string>& cmd_sections, std::thread& s
 	search_thread = std::thread(best_move, std::ref(pos), std::ref(search_data));
 }
 
-void uci_perft_command(const std::vector<std::string>& cmd_sections, Position& pos) {
+void uci_perft_command(const std::vector<std::string> &cmd_sections, Position &pos) {
 	i32 depth = std::stoi(cmd_sections[1]);
 	i32 ply = 0;
 	std::cout << perft(pos, depth, ply) << std::endl;
 }
 
-void uci_position_command(const std::vector<std::string>& cmd_sections, Position& pos) {
+void uci_position_command(const std::vector<std::string> &cmd_sections, Position &pos) {
 	i32 move_token = 0;
 
 	if (cmd_sections[1] == "startpos") {
 		pos = load_from_fen(start_fen);
 		move_token = 3;
-	}
-	else {
+	} else {
 		std::string fen = "";
 		for (i32 token = 2; token < 8; token++) {
 			fen += cmd_sections[token];

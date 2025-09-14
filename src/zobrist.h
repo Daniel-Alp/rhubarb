@@ -11,7 +11,7 @@ extern std::array<std::array<u64, 64>, 15> keys_pce;
 extern std::array<u64, 16> keys_castling_rights;
 
 void precompute_zobrist();
-u64 get_zobrist_key(Position& pos);
+u64 get_zobrist_key(Position &pos);
 
 //From StockFish
 inline u64 random_u64() {

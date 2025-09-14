@@ -1,15 +1,5 @@
-#include "bitboard.h"
-#include "board.h"
-#include "evaluation.h"
-// #include "parser.h"
-#include "perft.h"
-#include "search.h"
-#include "types.h"
 #include "uci.h"
 #include "zobrist.h"
-
-#include <iostream>
-#include "makemove.h"
 
 int main() {
 	precompute_rays();

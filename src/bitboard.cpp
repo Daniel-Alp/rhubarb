@@ -1,8 +1,5 @@
-#include "common.h"
-#include "bitboard.h"
 #include "board.h"
-#include <array>
-#include <iostream>
+#include "bitboard.h"
 
 std::array<u64, 64> ray_nort;
 std::array<u64, 64> ray_noea;

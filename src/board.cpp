@@ -1,14 +1,12 @@
 #include "common.h"
-#include "bitboard.h"
 #include "board.h"
+#include "bitboard.h"
 #include "evaluation.h"
 #include "parser.h"
 #include "types.h"
 #include "zobrist.h"
 #include <array>
-#include <iostream>
 #include <string>
-#include <vector>
 
 std::string start_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -31,11 +29,9 @@ Position load_from_fen(const std::string &fen_string) {
 		if (symbol == '/') {
 			rank--;
 			file = 0;
-		}
-		else if (isdigit(symbol)) {
+		} else if (isdigit(symbol)) {
 			file += symbol - '0';
-		}
-		else {
+		} else {
 			const i32 sq = get_sq(rank, file);
 			const u64 sq_bb = get_sq_bitboard(sq);
 			const Piece pce = symbol_to_pce(symbol);
@@ -59,8 +55,7 @@ Position load_from_fen(const std::string &fen_string) {
 
 	if (side_to_move_section == "w") {
 		pos.side_to_move = Color::WHITE;
-	}
-	else {
+	} else {
 		pos.side_to_move = Color::BLACK;
 	}
 
@@ -79,8 +74,7 @@ Position load_from_fen(const std::string &fen_string) {
 
 	if (en_passant_sq_section == "-") {
 		pos.en_passant_sq = Square::NO_SQ;
-	}
-	else {
+	} else {
 		const u32 rank = en_passant_sq_section[1] - '1';
 		const u32 file = en_passant_sq_section[0] - 'a';
 		pos.en_passant_sq = static_cast<Square>(get_sq(rank, file));

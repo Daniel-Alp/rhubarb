@@ -1,12 +1,9 @@
 #pragma once
 
-#include "common.h"
 #include "board.h"
 #include "bitboard.h"
-#include "types.h"
 #include <array>
-#include <iostream>
-
+	
 inline u64 gen_bishop_attacks(const i32 sq, u64 occluded) {
 	occluded |= 0x8000000000000001;
 	const i32 block_noea = get_lsb(ray_noea_stop[sq] & occluded);
@@ -40,8 +37,7 @@ inline bool sq_attacked(const Position &pos, const i32 sq, const Color side_atta
 		if (black_pawn_attacks[sq] & pos.pce_bitboards[Piece::WHITE_PAWN]) {
 			return true;
 		}
-	}
-	else {
+	} else {
 		if (white_pawn_attacks[sq] & pos.pce_bitboards[Piece::BLACK_PAWN]) {
 			return true;
 		}
@@ -55,7 +51,6 @@ inline bool sq_attacked(const Position &pos, const i32 sq, const Color side_atta
 	if (bishop_attacks & (pos.pce_bitboards[bishop] | pos.pce_bitboards[queen])) {
 		return true;
 	}
-
 	if (rook_attacks & (pos.pce_bitboards[rook] | pos.pce_bitboards[queen])) {
 		return true;
 	}

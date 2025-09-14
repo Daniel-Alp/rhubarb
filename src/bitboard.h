@@ -47,48 +47,63 @@ void precompute_non_slider_attacks();
 inline u64 shift_nort(const u64 bitboard) {
 	return bitboard << 8;
 }
+
 inline u64 shift_noea(const u64 bitboard) {
 	return (bitboard << 9) & 0xfefefefefefefefe;
 }
+
 inline u64 shift_east(const u64 bitboard) {
 	return (bitboard << 1) & 0xfefefefefefefefe;
 }
+
 inline u64 shift_soea(const u64 bitboard) {
 	return (bitboard >> 7) & 0xfefefefefefefefe;
 }
+
 inline u64 shift_sout(const u64 bitboard) {
 	return bitboard >> 8;
 }
+
 inline u64 shift_sowe(const u64 bitboard) {
 	return (bitboard >> 9) & 0x7f7f7f7f7f7f7f7f;
 }
+
 inline u64 shift_west(const u64 bitboard) {
 	return (bitboard >> 1) & 0x7f7f7f7f7f7f7f7f;
 }
+
 inline u64 shift_nowe(const u64 bitboard) {
 	return (bitboard << 7) & 0x7f7f7f7f7f7f7f7f;
 }
+
 inline u64 get_sq_bitboard(const u32 sq) {
 	return ((u64)1) << sq;
 }
+
 inline bool has_sq(const u64 bitboard, const u64 sq) {
 	return bitboard & sq;
 }
+
 inline u64 set_sq(const u64 bitboard, const u64 sq) {
 	return bitboard | sq;
 }
+
 inline u64 clear_sq(const u64 bitboard, const u64 sq) {
 	return bitboard ^ sq;
 }
+
 inline u64 move_sq(const u64 bitboard, const u64 from_sq, const u64 to_sq) {
 	return bitboard ^ from_sq ^ to_sq;
 }
+
 inline i32 get_lsb(const u64 bitboard) {
 	return __builtin_ctzl(bitboard);
 }
+
 inline i32 get_msb(const u64 bitboard) {
 	return __builtin_clzl(bitboard) ^ 63;
 }
+
 inline u64 clear_lsb(const u64 bitboard) {
 	return bitboard & (bitboard - 1);
 }

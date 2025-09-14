@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <string>
 
-u64 perft(Position& pos, i32 depth, i32 ply) {
+u64 perft(Position &pos, i32 depth, i32 ply) {
 	if (depth == 0) {
 		return 1;
 	}

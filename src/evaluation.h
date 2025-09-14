@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "board.h"
+#include "bitboard.h"
 #include <array>
 
 constexpr std::array<i32, 15> material_midgame_vals = { 
@@ -138,6 +139,6 @@ constexpr std::array<i32, 64> king_endgame_psqt = {
 extern std::array<std::array<i32, 64>, 15> pce_psqts_midgame;
 extern std::array<std::array<i32, 64>, 15> pce_psqts_endgame;
 
-void precompute_pce_psqt(const Piece piece, std::array<i32, 64> pcetype_psqt_midgame, std::array<i32, 64> pcetype_psqt_endgame);
+void precompute_pce_psqt(const Piece piece, const std::array<i32, 64> &pcetype_psqt_midgame, const std::array<i32, 64> &pcetype_psqt_endgame);
 
-i32 evaluate(const Position& pos);
+i32 evaluate(const Position &pos);

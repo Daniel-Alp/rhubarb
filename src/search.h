@@ -23,9 +23,11 @@ struct SearchData {
 	Move best_move_root;
 };
 
-void best_move(Position& pos, SearchData& search_data);
-i32 negamax(Position& pos, SearchData& search_data, i32 alpha, i32 beta, i32 depth, i32 ply, bool allow_null);
-i32 quiescence(Position& pos, SearchData& search_data, i32 alpha, i32 beta);
+void best_move(Position &pos, SearchData &search_data);
+
+i32 negamax(Position &pos, SearchData &search_data, i32 alpha, i32 beta, i32 depth, i32 ply, bool allow_null);
+
+i32 quiescence(Position &pos, SearchData &search_data, i32 alpha, i32 beta);
 
 inline void precompute_reduction_table() {
 	for (i32 depth = 1; depth < 256; depth++) {
@@ -62,7 +64,7 @@ inline i64 mvv_lva(PieceType cap_pce_type, PieceType move_pce_type) {
 	return (static_cast<i64>(cap_pce_type) << 50) - static_cast<i64>(move_pce_type);
 }
 
-inline i64 score_move(const Move& move, const Move& hash_entry_best_move, std::array<Piece, 64>& pces, i32 ply) {
+inline i64 score_move(const Move &move, const Move &hash_entry_best_move, std::array<Piece, 64> &pces, i32 ply) {
 	if (move == hash_entry_best_move) {
 		return ((i64)1) << 60;
 	}
@@ -87,7 +89,7 @@ inline i64 score_move(const Move& move, const Move& hash_entry_best_move, std::a
 	return history_table[move_pce][to_sq] + pce_psqts_midgame[move_pce_type][to_sq] - pce_psqts_midgame[move_pce_type][from_sq];
 }
 
-inline Move get_next_move(MoveList& move_list, std::array<i64, MoveList::max_moves>& scores, i32 cur_move_index) {
+inline Move get_next_move(MoveList &move_list, std::array<i64, MoveList::max_moves> &scores, i32 cur_move_index) {
 	i32 best_move_index = cur_move_index;
 	for (i32 i = cur_move_index + 1; i < move_list.size(); i++) {
 		if (scores[i] > scores[best_move_index]) {
@@ -99,12 +101,12 @@ inline Move get_next_move(MoveList& move_list, std::array<i64, MoveList::max_mov
 	return move_list.get(cur_move_index);
 }
 
-inline bool time_up(SearchData& search_data) {
+inline bool time_up(SearchData &search_data) {
 	search_data.nodes++;
 	return (search_data.nodes & 2047) == 0 && get_current_time() - search_data.start_time > search_data.time_allotted;
 }
 
-inline bool repeated_pos(const Position& pos) {
+inline bool repeated_pos(const Position &pos) {
 	const i32 min_ply = std::max(pos.history_ply - pos.fifty_move_rule, ((i32)0));
 	for (i32 ply = pos.history_ply - 2; ply >= min_ply; ply -= 2) {
 		if (pos.zobrist_key == pos.history_stack[ply]) {
