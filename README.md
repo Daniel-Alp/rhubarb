@@ -1,5 +1,14 @@
 # Rhubarb
-Engine that supports the Universal Chess Interface. I've tried to order features for each category chronologically.
+Engine that supports the Universal Chess Interface. To build the engine (on Linux or MacOS)
+```
+git clone https://github.com/Daniel-Alp/rhubarb
+cd rhubarb
+mkdir build
+cd build
+cmake ..
+cd ..
+cmake --build build
+```
 
 # Features
 Evaluation
