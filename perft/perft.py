@@ -12,12 +12,16 @@ perft_path = args.perft
 
 p = Popen(engine_path, stdin=PIPE, stdout=PIPE, stderr=STDOUT, universal_newlines=True)
 
+def parse_token(token: str) -> tuple[int, int]:
+    depth,nodes = token.split()
+    return int(depth[1:]), int(nodes)
+
 with open(perft_path, "r") as perft:
     for test in perft:
         fen, *rest = test.split(";")
-        rest = [int(token[3:]) for token in rest]
+        rest = [parse_token(token) for token in rest]
 
-        for depth, nodes in enumerate(rest, start=1):
+        for depth, nodes in rest:
             p.stdin.write(f"position fen {fen}\n")
             p.stdin.write(f"perft {depth}\n")
             p.stdin.flush()
