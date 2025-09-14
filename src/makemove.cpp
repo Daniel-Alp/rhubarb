@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-bool make_move(Position &pos, const Move &move) {
+bool make_move(Position &pos, const Move move) {
 	pos.undo_stack[pos.ply].en_passant_sq	= pos.en_passant_sq;
 	pos.undo_stack[pos.ply].castling_rights = pos.castling_rights;
 	pos.undo_stack[pos.ply].fifty_move_rule = pos.fifty_move_rule;
@@ -86,7 +86,7 @@ bool make_move(Position &pos, const Move &move) {
 	return true;
 }
 
-void undo_move(Position &pos, const Move &move) {
+void undo_move(Position &pos, const Move move) {
 	pos.history_ply--;
 	pos.ply--;
 	pos.side_to_move = flip_col(pos.side_to_move);

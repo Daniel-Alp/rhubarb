@@ -108,5 +108,5 @@ inline void make_null_move(Position &pos) {
 	pos.ply++;
 }
 
-bool make_move(Position &pos, const Move &move);
-void undo_move(Position &pos, const Move &move);
+bool make_move(Position &pos, const Move move);
+void undo_move(Position &pos, const Move move);

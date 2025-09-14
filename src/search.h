@@ -64,7 +64,7 @@ inline i64 mvv_lva(PieceType cap_pce_type, PieceType move_pce_type) {
 	return (static_cast<i64>(cap_pce_type) << 50) - static_cast<i64>(move_pce_type);
 }
 
-inline i64 score_move(const Move &move, const Move &hash_entry_best_move, std::array<Piece, 64> &pces, i32 ply) {
+inline i64 score_move(const Move move, const Move &hash_entry_best_move, std::array<Piece, 64> &pces, i32 ply) {
 	if (move == hash_entry_best_move) {
 		return ((i64)1) << 60;
 	}
