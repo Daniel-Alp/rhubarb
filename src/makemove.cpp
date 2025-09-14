@@ -5,7 +5,6 @@
 #include "makemove.h"
 #include "zobrist.h"
 #include <array>
-#include <cstdint>
 
 #include <iostream>
 
@@ -17,8 +16,8 @@ bool make_move(Position& pos, const Move& move) {
 
 	pos.history_stack[pos.history_ply] = pos.zobrist_key;
 
-	const uint32_t from_sq = move.get_from_sq();
-	const uint32_t to_sq = move.get_to_sq();
+	const u32 from_sq = move.get_from_sq();
+	const u32 to_sq = move.get_to_sq();
 	
 	if (pos.en_passant_sq != Square::NO_SQ) {
 		pos.zobrist_key = hash_en_passant_sq(pos.zobrist_key, pos.en_passant_sq);
@@ -95,8 +94,8 @@ void undo_move(Position& pos, const Move& move) {
 	pos.ply--;
 	pos.side_to_move = flip_col(pos.side_to_move);
 
-	const uint32_t from_sq = move.get_from_sq();
-	const uint32_t to_sq = move.get_to_sq();
+	const u32 from_sq = move.get_from_sq();
+	const u32 to_sq = move.get_to_sq();
 
 	if (move.is_castle()) {
 		move_pce(pos, to_sq, from_sq);

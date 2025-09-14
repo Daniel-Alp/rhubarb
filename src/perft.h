@@ -1,6 +1,6 @@
 #pragma once
 
+#include "common.h"
 #include "board.h"
-#include <cstdint>
 
-uint64_t perft(Position& pos, int depth, int ply);
+u64 perft(Position& pos, i32 depth, i32 ply);

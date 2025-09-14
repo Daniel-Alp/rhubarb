@@ -1,14 +1,14 @@
 #pragma once
 
+#include "common.h"
 #include "types.h"
 #include "board.h"
 #include <array>
-#include <cstdint>
 #include <string>
 
-constexpr uint32_t null_move_val = 0;
+constexpr u32 null_move_val = 0;
 
-enum MoveFlag : uint32_t {
+enum MoveFlag : u32 {
 	NO_FLAG	   = 0b00000000000000000000000,
 	PAWN_START = 0b00100000000000000000000,
 	CASTLE	   = 0b01000000000000000000000,
@@ -17,11 +17,11 @@ enum MoveFlag : uint32_t {
 
 class Move {
 private:
-	uint32_t val;
+	u32 val;
 public:
 	inline Move() : val(null_move_val) {}
 
-	inline Move(uint32_t from_sq, uint32_t to_sq, Piece capture_pce, Piece promo_pce, MoveFlag flag) {
+	inline Move(u32 from_sq, u32 to_sq, Piece capture_pce, Piece promo_pce, MoveFlag flag) {
 		val = (from_sq | (to_sq << 6) | (capture_pce << 12) | (promo_pce << 16) | flag);
 	}
 
@@ -33,11 +33,11 @@ public:
 		return val != move.val;
 	}
 
-	inline uint32_t get_from_sq() const {
+	inline u32 get_from_sq() const {
 		return val & 0b111111;
 	}
 
-	inline uint32_t get_to_sq() const {
+	inline u32 get_to_sq() const {
 		return (val >> 6) & 0b111111;
 	}
 
@@ -50,15 +50,15 @@ public:
 	}
 
 	inline bool is_pawn_start() const {
-		return val & static_cast<uint32_t>(MoveFlag::PAWN_START);
+		return val & static_cast<u32>(MoveFlag::PAWN_START);
 	}
 
 	inline bool is_castle() const {
-		return val & static_cast<uint32_t>(MoveFlag::CASTLE);
+		return val & static_cast<u32>(MoveFlag::CASTLE);
 	}
 
 	inline bool is_en_passant() const {
-		return val & static_cast<uint32_t>(MoveFlag::EN_PASSANT);
+		return val & static_cast<u32>(MoveFlag::EN_PASSANT);
 	}
 
 	inline bool is_quiet() const {
@@ -66,12 +66,12 @@ public:
 	}
 
 	inline std::string to_str() const {
-		const uint32_t from_sq = get_from_sq();
-		const int from_rank = get_rank(from_sq);
-		const int from_file = get_file(from_sq);
-		const uint32_t to_sq = get_to_sq();
-		const int to_rank = get_rank(to_sq);
-		const int to_file = get_file(to_sq);
+		const u32 from_sq = get_from_sq();
+		const i32 from_rank = get_rank(from_sq);
+		const i32 from_file = get_file(from_sq);
+		const u32 to_sq = get_to_sq();
+		const i32 to_rank = get_rank(to_sq);
+		const i32 to_file = get_file(to_sq);
 
 		std::string move_str;
 		move_str.push_back('a' + from_file);
@@ -91,8 +91,8 @@ public:
 
 class MoveList {
 public:
-	static constexpr int max_moves = 218;
-	inline int size() const {
+	static constexpr i32 max_moves = 218;
+	inline i32 size() const {
 		return m_size;
 	}
 
@@ -100,14 +100,14 @@ public:
 		moves[m_size++] = move;
 	}
 
-	inline Move get(const int i) const {
+	inline Move get(const i32 i) const {
 		return moves[i];
 	}
 
-	inline void swap(const int i1, const int i2) {
+	inline void swap(const i32 i1, const i32 i2) {
 		std::swap(moves[i1], moves[i2]);
 	}
 private:
-	int m_size = 0;
+	i32 m_size = 0;
 	std::array<Move, max_moves> moves{};
 };

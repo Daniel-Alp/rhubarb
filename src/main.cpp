@@ -1,7 +1,7 @@
 #include "bitboard.h"
 #include "board.h"
-#include "bench.h"
 #include "evaluation.h"
+// #include "parser.h"
 #include "perft.h"
 #include "search.h"
 #include "types.h"
@@ -36,9 +36,10 @@ int main() {
 
 	precompute_reduction_table();
 
-	//run_perft_suite();
-		
-	//run_bench();
-
+	// Position pos;
+	// std::vector<std::string> cmd_sections = split_string("position startpos", ' ');
+	// uci_position_command(cmd_sections, pos);
+	// cmd_sections = split_string("perft 6", ' ');
+	// uci_perft_command(cmd_sections, pos);
 	uci_loop();
 }

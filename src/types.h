@@ -1,14 +1,14 @@
 #pragma once
 
-#include <cstdint>
+#include "common.h"
 #include <array>
 
-enum Color : uint32_t {
+enum Color : u32 {
 	WHITE,
 	BLACK
 };
 
-enum PieceType : uint32_t {
+enum PieceType : u32 {
 	PAWN = 1,
 	KNIGHT,
 	BISHOP,
@@ -17,7 +17,7 @@ enum PieceType : uint32_t {
 	KING
 };
 
-enum Piece : uint32_t{
+enum Piece : u32{
 	NONE = 0,
 	WHITE_PAWN = 1,
 	WHITE_KNIGHT = 2,
@@ -33,7 +33,7 @@ enum Piece : uint32_t{
 	BLACK_KING = 14
 };
 
-enum CastlingRights : uint32_t {
+enum CastlingRights : u32 {
 	WHITE_SHORT = 1,
 	WHITE_LONG	= 2,
 	BLACK_SHORT = 4,

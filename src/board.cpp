@@ -1,3 +1,4 @@
+#include "common.h"
 #include "bitboard.h"
 #include "board.h"
 #include "evaluation.h"
@@ -5,14 +6,13 @@
 #include "types.h"
 #include "zobrist.h"
 #include <array>
-#include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
 
 std::string start_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-Position load_from_fen(const std::string& fen_string) {
+Position load_from_fen(const std::string &fen_string) {
 	Position pos{};
 
 	const std::vector<std::string> fen_sections = split_string(fen_string, ' ');
@@ -22,11 +22,11 @@ Position load_from_fen(const std::string& fen_string) {
 	const std::string en_passant_sq_section	  = fen_sections[3];
 	const std::string fifty_move_rule_section = fen_sections[4];
 
-	for (int sq = 0; sq < 64; sq++) {
+	for (i32 sq = 0; sq < 64; sq++) {
 		pos.pces[sq] = Piece::NONE;
 	}
-	int rank = 7;
-	int file = 0;
+	i32 rank = 7;
+	i32 file = 0;
 	for (char symbol : piece_placement_section) {
 		if (symbol == '/') {
 			rank--;
@@ -36,8 +36,8 @@ Position load_from_fen(const std::string& fen_string) {
 			file += symbol - '0';
 		}
 		else {
-			const int sq = get_sq(rank, file);
-			const uint64_t sq_bb = get_sq_bitboard(sq);
+			const i32 sq = get_sq(rank, file);
+			const u64 sq_bb = get_sq_bitboard(sq);
 			const Piece pce = symbol_to_pce(symbol);
 			const Color col = get_col(pce);
 
@@ -81,8 +81,8 @@ Position load_from_fen(const std::string& fen_string) {
 		pos.en_passant_sq = Square::NO_SQ;
 	}
 	else {
-		const uint32_t rank = en_passant_sq_section[1] - '1';
-		const uint32_t file = en_passant_sq_section[0] - 'a';
+		const u32 rank = en_passant_sq_section[1] - '1';
+		const u32 file = en_passant_sq_section[0] - 'a';
 		pos.en_passant_sq = static_cast<Square>(get_sq(rank, file));
 	}
 

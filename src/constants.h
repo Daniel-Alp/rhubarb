@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include "common.h"
 
-constexpr int32_t mate_score = 30000;
-constexpr int max_search_ply = 255;
+constexpr i32 mate_score = 30000;
+constexpr i32 max_search_ply = 255;

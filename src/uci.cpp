@@ -9,7 +9,6 @@
 #include "transposition.h"
 #include "types.h"
 #include "uci.h"
-#include <cstdint>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -73,15 +72,15 @@ void uci_loop() {
 }
 
 void uci_go_command(const std::vector<std::string>& cmd_sections, std::thread& search_thread, SearchData& search_data, Position& pos) {
-	int32_t wtime = 0;
-	int32_t btime = 0;
-	int32_t winc = 0;
-	int32_t binc = 0;
-	int32_t moves_to_go = 0;
+	i32 wtime = 0;
+	i32 btime = 0;
+	i32 winc = 0;
+	i32 binc = 0;
+	i32 moves_to_go = 0;
 
 	std::string token_type;
 	
-	for (int token = 1; token < cmd_sections.size() - 1; token += 2) {
+	for (i32 token = 1; token < cmd_sections.size() - 1; token += 2) {
 		token_type = cmd_sections[token];
 		if (token_type == "wtime") {
 			wtime = std::stoi(cmd_sections[token + 1]);
@@ -100,10 +99,10 @@ void uci_go_command(const std::vector<std::string>& cmd_sections, std::thread& s
 		}
 	}
 
-	int32_t player_time = 0;
-	int32_t opp_time = 0;
-	int32_t player_inc = 0;
-	int32_t opp_inc = 0;
+	i32 player_time = 0;
+	i32 opp_time = 0;
+	i32 player_inc = 0;
+	i32 opp_inc = 0;
 
 	if (pos.side_to_move == Color::WHITE) {
 		player_time = wtime;
@@ -125,13 +124,13 @@ void uci_go_command(const std::vector<std::string>& cmd_sections, std::thread& s
 }
 
 void uci_perft_command(const std::vector<std::string>& cmd_sections, Position& pos) {
-	int32_t depth = std::stoi(cmd_sections[1]);
-	int32_t ply = 0;
+	i32 depth = std::stoi(cmd_sections[1]);
+	i32 ply = 0;
 	std::cout << perft(pos, depth, ply) << std::endl;
 }
 
 void uci_position_command(const std::vector<std::string>& cmd_sections, Position& pos) {
-	int move_token = 0;
+	i32 move_token = 0;
 
 	if (cmd_sections[1] == "startpos") {
 		pos = load_from_fen(start_fen);
@@ -139,7 +138,7 @@ void uci_position_command(const std::vector<std::string>& cmd_sections, Position
 	}
 	else {
 		std::string fen = "";
-		for (int token = 2; token < 8; token++) {
+		for (i32 token = 2; token < 8; token++) {
 			fen += cmd_sections[token];
 			fen += " ";
 		}
@@ -149,7 +148,7 @@ void uci_position_command(const std::vector<std::string>& cmd_sections, Position
 
 	while (move_token < cmd_sections.size()) {
 		MoveList move_list = gen_pseudo_moves(pos, false);
-		for (int i = 0; i < move_list.size(); i++) {
+		for (i32 i = 0; i < move_list.size(); i++) {
 			Move move = move_list.get(i);
 			if (move.to_str() == cmd_sections[move_token]) {
 				make_move(pos, move);

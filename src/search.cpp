@@ -1,3 +1,4 @@
+#include "common.h"
 #include "attacks.h"
 #include "board.h"
 #include "constants.h"
@@ -7,12 +8,11 @@
 #include "movegen.h"
 #include "search.h"
 #include <algorithm>
-#include <cstdint>
 #include <iostream>
 
-std::array<std::array<int64_t, 64>, 15> history_table;
+std::array<std::array<i64, 64>, 15> history_table;
 std::array<std::array<Move, 2>, 257> killer_table;
-std::array<std::array<int, 218>, 256> reduction_table;
+std::array<std::array<i32, 218>, 256> reduction_table;
 
 void best_move(Position& pos, SearchData& search_data) {
 	div_two_history_table();
@@ -21,14 +21,14 @@ void best_move(Position& pos, SearchData& search_data) {
 	search_data.best_move_root = Move();
 	search_data.searching = true;
 
-	const int min_depth_aspiration = 6;
+	const i32 min_depth_aspiration = 6;
 
 	Move best_move_root_prev = Move();
-	int32_t score_prev;
+	i32 score_prev;
 
-	for (int depth = 1; depth < search_data.max_depth; depth++) {
+	for (i32 depth = 1; depth < search_data.max_depth; depth++) {
 		pos.ply = 0;
-		int32_t score;
+		i32 score;
 
 		if (depth <= min_depth_aspiration) {
 			score = negamax(pos, search_data, -mate_score, mate_score, depth, 0, false);
@@ -40,9 +40,9 @@ void best_move(Position& pos, SearchData& search_data) {
 			}
 		}
 		else {
-			int delta = 30;
-			int alpha = std::max(score_prev - delta, -mate_score);
-			int beta = std::min(score_prev + delta, mate_score);
+			i32 delta = 30;
+			i32 alpha = std::max(score_prev - delta, -mate_score);
+			i32 beta = std::min(score_prev + delta, mate_score);
 
 			while (true) {
 				score = negamax(pos, search_data, alpha, beta, depth, 0, false);
@@ -83,7 +83,7 @@ void best_move(Position& pos, SearchData& search_data) {
 }
 
 
-int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t beta, int depth, int ply, bool allow_null) {
+i32 negamax(Position& pos, SearchData& search_data, i32 alpha, i32 beta, i32 depth, i32 ply, bool allow_null) {
 	if (time_up(search_data)) {
 		search_data.searching = false;
 		return 0;
@@ -104,7 +104,7 @@ int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t b
 	const bool matching_key = (hash_entry.zobrist_key == pos.zobrist_key);
 
 	if (!pv_node && matching_key && hash_entry.depth >= depth) {
-		int32_t retrieved_score = hash_table.hash_table_to_score(hash_entry.score, ply);
+		i32 retrieved_score = hash_table.hash_table_to_score(hash_entry.score, ply);
 
 		if (hash_entry.hash_flag == HashFlag::EXACT
 			|| (hash_entry.hash_flag == HashFlag::BETA && (retrieved_score >= beta))
@@ -113,7 +113,7 @@ int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t b
 		}
 	}
 
-	const int king_sq = get_lsb(pos.pce_bitboards[build_pce(PieceType::KING, pos.side_to_move)]);
+	const i32 king_sq = get_lsb(pos.pce_bitboards[build_pce(PieceType::KING, pos.side_to_move)]);
 	const bool in_check = sq_attacked(pos, king_sq, flip_col(pos.side_to_move));
 
 	if (depth <= 0 && !in_check) {
@@ -121,15 +121,15 @@ int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t b
 	}
 
 	if (!pv_node && !in_check) {
-		const int32_t static_eval = evaluate(pos);
+		const i32 static_eval = evaluate(pos);
 		if (static_eval - depth * 100 >= beta && depth < 9) {
 			return static_eval;
 		}
 
 		if (allow_null && depth >= 3 && pos.phase_val > 0 && static_eval >= beta) {
 			make_null_move(pos);
-			const int reduction = 2 + depth / 3;
-			const int32_t score = -negamax(pos, search_data, -beta, -beta + 1, depth - 1 - reduction, ply + 1, false);
+			const i32 reduction = 2 + depth / 3;
+			const i32 score = -negamax(pos, search_data, -beta, -beta + 1, depth - 1 - reduction, ply + 1, false);
 			undo_null_move(pos);
 			if (score >= beta) {
 				return score;
@@ -138,27 +138,27 @@ int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t b
 	}
 	
 	MoveList move_list = gen_pseudo_moves(pos, false);
-	int num_legal_moves = 0;
+	i32 num_legal_moves = 0;
 
 	Move hash_entry_best_move = Move();
 	if (matching_key) {
 		hash_entry_best_move = hash_entry.best_move;
 	}
-	std::array<int64_t, MoveList::max_moves> scores{};
-	for (int i = 0; i < move_list.size(); i++) {
+	std::array<i64, MoveList::max_moves> scores{};
+	for (i32 i = 0; i < move_list.size(); i++) {
 		scores[i] = score_move(move_list.get(i), hash_entry_best_move, pos.pces, ply);
 	}
 
-	int32_t best_score = -mate_score;
+	i32 best_score = -mate_score;
 	Move best_move = Move();
 
-	const int32_t orig_alpha = alpha;
-	int32_t score;
+	const i32 orig_alpha = alpha;
+	i32 score;
 
 	killer_table[ply + 1][0] = Move();
 	killer_table[ply + 1][1] = Move();
 
-	for (int i = 0; i < move_list.size(); i++) {
+	for (i32 i = 0; i < move_list.size(); i++) {
 		const Move move = get_next_move(move_list, scores, i);
 		const Piece move_pce = pos.pces[move.get_from_sq()];
 			
@@ -169,7 +169,7 @@ int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t b
 		num_legal_moves++;
 
 		if (num_legal_moves > 1) {
-			int reduction = reduction_table[depth][num_legal_moves];
+			i32 reduction = reduction_table[depth][num_legal_moves];
 			reduction -= history_table[move_pce][move.get_to_sq()] / 16384;
 			if (in_check) {
 				reduction--;
@@ -223,7 +223,7 @@ int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t b
 					}
 					
 					history_table[move_pce][move.get_to_sq()] += depth * depth;
-					for (int j = 0; j < i; j++) {
+					for (i32 j = 0; j < i; j++) {
 						const Move penalized_move = move_list.get(j);
 						if (!penalized_move.is_quiet()) {
 							continue;
@@ -252,7 +252,7 @@ int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t b
 		}
 	}
 
-	int32_t recorded_score = hash_table.score_to_hash_table(best_score, ply);
+	i32 recorded_score = hash_table.score_to_hash_table(best_score, ply);
 
 	HashFlag hash_flag;
 	if (best_score >= beta) {
@@ -269,13 +269,13 @@ int32_t negamax(Position& pos, SearchData& search_data, int32_t alpha, int32_t b
 	return best_score;
 }
 
-int32_t quiescence(Position& pos, SearchData& search_data, int32_t alpha, int32_t beta) {
+i32 quiescence(Position& pos, SearchData& search_data, i32 alpha, i32 beta) {
 	if (time_up(search_data)) {
 		search_data.searching = false;
 		return 0;
 	}
 
-	int32_t best_score = evaluate(pos);
+	i32 best_score = evaluate(pos);
 
 	if (best_score > alpha) {
 		alpha = best_score;
@@ -285,19 +285,19 @@ int32_t quiescence(Position& pos, SearchData& search_data, int32_t alpha, int32_
 	}
 
 	MoveList move_list = gen_pseudo_moves(pos, true);
-	std::array<int64_t, MoveList::max_moves> scores{};
-	for (int i = 0; i < move_list.size(); i++) {
+	std::array<i64, MoveList::max_moves> scores{};
+	for (i32 i = 0; i < move_list.size(); i++) {
 		scores[i] = score_move(move_list.get(i), Move(), pos.pces, 255);
 	}
 
-	for (int i = 0; i < move_list.size(); i++) {
+	for (i32 i = 0; i < move_list.size(); i++) {
 		const Move move = get_next_move(move_list, scores, i);
 
 		if (!make_move(pos, move)) {
 			continue;
 		}
 
-		int32_t score = -quiescence(pos, search_data, -beta, -alpha);
+		i32 score = -quiescence(pos, search_data, -beta, -alpha);
 		undo_move(pos, move);
 		if (!search_data.searching) {
 			return 0;
