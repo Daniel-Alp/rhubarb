@@ -1,5 +1,6 @@
 #include "uci.h"
 #include "zobrist.h"
+#include "bench.h"
 
 int main() {
 	precompute_rays();
@@ -31,5 +32,6 @@ int main() {
 	// uci_position_command(cmd_sections, pos);
 	// cmd_sections = split_string("perft 6", ' ');
 	// uci_perft_command(cmd_sections, pos);
-	uci_loop();
+	// uci_loop();
+	run_bench();
 }

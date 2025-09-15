@@ -66,4 +66,5 @@ private:
 	std::array<HashEntry, num_hash_entries> hash_table;
 };
 
+// never lock the TT. data races are better than the cost of locking
 inline HashTable hash_table;

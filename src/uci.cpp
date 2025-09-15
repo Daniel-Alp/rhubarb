@@ -16,7 +16,7 @@
 
 void uci_loop() {
 	Position pos{};
-	SearchData search_data{};
+	ThreadData search_data{};
 	search_data.nodes = 0;
 	std::thread search_thread;
 
@@ -41,8 +41,7 @@ void uci_loop() {
 			std::cout << "readyok" << std::endl;
 		} else if (cmd_type == "ucinewgame") {
 			pos = load_from_fen(start_fen);
-			hash_table.clear();
-			clear_history_table();
+			reset_search();
 		} else if (cmd_type == "position") {
 			uci_position_command(cmd_sections, pos);
 		} else if (cmd_type == "perft") {
@@ -63,7 +62,7 @@ void uci_loop() {
 	}
 }
 
-void uci_go_command(const std::vector<std::string> &cmd_sections, std::thread &search_thread, SearchData &search_data, Position &pos) {
+void uci_go_command(const std::vector<std::string> &cmd_sections, std::thread &search_thread, ThreadData &search_data, Position &pos) {
 	i32 wtime = 0;
 	i32 btime = 0;
 	i32 winc = 0;
@@ -103,11 +102,10 @@ void uci_go_command(const std::vector<std::string> &cmd_sections, std::thread &s
 		player_inc = binc;
 		opp_inc = winc;
 	}
-	search_data.start_time = get_current_time();
-	search_data.time_allotted = get_time_allotted(player_time, opp_time, player_inc, opp_inc, moves_to_go);
-	search_data.max_depth = 255;
-
-	search_thread = std::thread(best_move, std::ref(pos), std::ref(search_data));
+	u64 start_time = get_current_time();
+	u64 time_allotted = get_time_allotted(player_time, opp_time, player_inc, opp_inc, moves_to_go);
+	i32 max_depth = 255;
+	search_thread = std::thread(best_move, pos, start_time, time_allotted, max_depth);
 }
 
 void uci_perft_command(const std::vector<std::string> &cmd_sections, Position &pos) {

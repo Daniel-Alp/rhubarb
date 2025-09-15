@@ -58,7 +58,7 @@
     },
     "config_name": "config.json",
     "output": 0,
-    "seed": 11288931235888527660,
+    "seed": 4894225187766966170,
     "variant": 0,
     "type": 0,
     "gauntlet_seeds": 1,
@@ -68,7 +68,7 @@
     "autosaveinterval": 20,
     "games": 2,
     "rounds": 20000,
-    "concurrency": 12,
+    "concurrency": 8,
     "force_concurrency": false,
     "recover": false,
     "noswap": false,
@@ -77,33 +77,13 @@
     "affinity": false,
     "show_latency": false,
     "log": {
-        "file": "",
-        "level": 2,
+        "file": "out.log",
+        "level": 1,
         "compress": false,
         "realtime": true,
-        "engine_coms": false
+        "engine_coms": true
     },
     "engines": [
-        {
-            "name": "rhubarb1",
-            "dir": ".",
-            "cmd": "../engines/rhubarb1",
-            "args": "",
-            "restart": false,
-            "options": [],
-            "limit": {
-                "tc": {
-                    "increment": 80,
-                    "fixed_time": 0,
-                    "time": 8000,
-                    "moves": 0,
-                    "timemargin": 0
-                },
-                "nodes": 0,
-                "plies": 0
-            },
-            "variant": 0
-        },
         {
             "name": "rhubarb",
             "dir": ".",
@@ -123,30 +103,50 @@
                 "plies": 0
             },
             "variant": 0
+        },
+        {
+            "name": "rhubarb3",
+            "dir": ".",
+            "cmd": "../engines/rhubarb3",
+            "args": "",
+            "restart": false,
+            "options": [],
+            "limit": {
+                "tc": {
+                    "increment": 80,
+                    "fixed_time": 0,
+                    "time": 8000,
+                    "moves": 0,
+                    "timemargin": 0
+                },
+                "nodes": 0,
+                "plies": 0
+            },
+            "variant": 0
         }
     ],
     "stats": {
-        "rhubarb vs rhubarb1": {
-            "wins": 37,
-            "losses": 42,
-            "draws": 53,
-            "penta_WW": 4,
-            "penta_WD": 13,
-            "penta_WL": 16,
-            "penta_DD": 13,
-            "penta_LD": 14,
-            "penta_LL": 6
+        "rhubarb3 vs rhubarb": {
+            "wins": 1,
+            "losses": 4,
+            "draws": 3,
+            "penta_WW": 0,
+            "penta_WD": 0,
+            "penta_WL": 1,
+            "penta_DD": 0,
+            "penta_LD": 3,
+            "penta_LL": 0
         },
-        "rhubarb1 vs rhubarb": {
-            "wins": 27,
-            "losses": 36,
-            "draws": 55,
-            "penta_WW": 2,
-            "penta_WD": 13,
-            "penta_WL": 10,
-            "penta_DD": 14,
-            "penta_LD": 14,
-            "penta_LL": 6
+        "rhubarb vs rhubarb3": {
+            "wins": 2,
+            "losses": 1,
+            "draws": 1,
+            "penta_WW": 1,
+            "penta_WD": 0,
+            "penta_WL": 0,
+            "penta_DD": 0,
+            "penta_LD": 1,
+            "penta_LL": 0
         }
     }
 }

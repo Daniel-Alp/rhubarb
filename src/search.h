@@ -10,24 +10,29 @@
 #include <algorithm>
 #include <cmath>
 
-extern std::array<std::array<i64, 64>, 15> history_table;
-extern std::array<std::array<Move, 2>, 257> killer_table;
 extern std::array<std::array<i32, 218>, 256> reduction_table;
 
-struct SearchData {
-	bool searching;
+struct ThreadData {
+	bool searching; // TODO move this out of the ThreadData
 	i32 max_depth;
 	u64 start_time;
 	u64 time_allotted;
 	u64 nodes;
 	Move best_move_root;
+	Move best_move_root_prev;
+	std::array<std::array<i64, 64>, 15> history_table;
+	std::array<std::array<Move, 2>, 257> killer_table;
 };
 
-void best_move(Position &pos, SearchData &search_data);
+void reset_search();
 
-i32 negamax(Position &pos, SearchData &search_data, i32 alpha, i32 beta, i32 depth, i32 ply, bool allow_null);
+void best_move(Position pos, u64 start_time, u64 time_allocated, i32 max_depth);
 
-i32 quiescence(Position &pos, SearchData &search_data, i32 alpha, i32 beta);
+void aspiration(Position pos, u64 start_time, u64 time_allocated, i32 max_depth, i32 thread_id);
+
+i32 negamax(Position &pos, ThreadData &thread_data, i32 alpha, i32 beta, i32 depth, i32 ply, bool allow_null);
+
+i32 quiescence(Position &pos, ThreadData &thread_data, i32 alpha, i32 beta);
 
 inline void precompute_reduction_table() {
 	for (i32 depth = 1; depth < 256; depth++) {
@@ -37,26 +42,18 @@ inline void precompute_reduction_table() {
 	}
 }
 
-inline void clear_history_table() {
+inline void clear_history_table(ThreadData &thread_data) {
 	for (i32 move_pce = Piece::NONE; move_pce <= Piece::BLACK_KING; move_pce++) {
 		for (i32 to_sq = 0; to_sq < 64; to_sq++) {
-			history_table[move_pce][to_sq] = 0;
+			thread_data.history_table[move_pce][to_sq] = 0;
 		}
 	}
 }
 
-inline void div_two_history_table() {
-	for (i32 move_pce = 0; move_pce <= Piece::BLACK_KING; move_pce++) {
-		for (i32 to_sq = 0; to_sq < 64; to_sq++) {
-			history_table[move_pce][to_sq] /= 2;
-		}
-	}
-}
-
-inline void clear_killer_table() {
+inline void clear_killer_table(ThreadData &thread_data) {
 	for (i32 ply = 0; ply < 256; ply++) {
-		killer_table[ply][0] = Move();
-		killer_table[ply][1] = Move();
+		thread_data.killer_table[ply][0] = Move();
+		thread_data.killer_table[ply][1] = Move();
 	}
 }
 
@@ -64,14 +61,14 @@ inline i64 mvv_lva(PieceType cap_pce_type, PieceType move_pce_type) {
 	return (static_cast<i64>(cap_pce_type) << 50) - static_cast<i64>(move_pce_type);
 }
 
-inline i64 score_move(const Move move, const Move &hash_entry_best_move, std::array<Piece, 64> &pces, i32 ply) {
+inline i64 score_move(const Move move, const Move &hash_entry_best_move, ThreadData &thread_data, std::array<Piece, 64> &pces, i32 ply) {
 	if (move == hash_entry_best_move) {
 		return ((i64)1) << 60;
 	}
-	if (move == killer_table[ply][1]) {
+	if (move == thread_data.killer_table[ply][1]) {
 		return ((i64)1) << 41;
 	}
-	if (move == killer_table[ply][0]) {
+	if (move == thread_data.killer_table[ply][0]) {
 		return ((i64)1) << 40;
 	}
 
@@ -86,7 +83,7 @@ inline i64 score_move(const Move move, const Move &hash_entry_best_move, std::ar
 	const i32 from_sq = move.get_from_sq();
 	const i32 to_sq = move.get_to_sq();
 
-	return history_table[move_pce][to_sq] + pce_psqts_midgame[move_pce_type][to_sq] - pce_psqts_midgame[move_pce_type][from_sq];
+	return thread_data.history_table[move_pce][to_sq] + pce_psqts_midgame[move_pce_type][to_sq] - pce_psqts_midgame[move_pce_type][from_sq];
 }
 
 inline Move get_next_move(MoveList &move_list, std::array<i64, MoveList::max_moves> &scores, i32 cur_move_index) {
@@ -101,9 +98,9 @@ inline Move get_next_move(MoveList &move_list, std::array<i64, MoveList::max_mov
 	return move_list.get(cur_move_index);
 }
 
-inline bool time_up(SearchData &search_data) {
-	search_data.nodes++;
-	return (search_data.nodes & 2047) == 0 && get_current_time() - search_data.start_time > search_data.time_allotted;
+inline bool time_up(ThreadData &thread_data) {
+	thread_data.nodes++;
+	return (thread_data.nodes & 2047) == 0 && get_current_time() - thread_data.start_time > thread_data.time_allotted;
 }
 
 inline bool repeated_pos(const Position &pos) {
